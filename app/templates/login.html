@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loginForms.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="web-container">
+    <div class="loginContainer">
+        <h2 class="signOptions-header">Login</h2>
+        <form name="login" action="" method="post">
+            {{ form.hidden_tag() }}
+
+            <div class="entry-item">
+                {{ form.username(class="input-field", placeholder=" ") }}
+                {{ form.username.label(class="placeholder-label", for="username") }}
+                {% for error in form.username.errors %}
+                <span style="color:red">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            
+            <div class="entry-item">
+                {{ form.password(class="input-field", placeholder=" ") }}
+                {{ form.password.label(class="placeholder-label", for="password") }}
+                {% for error in form.password.errors %}
+                <span style="color:red">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+
+            <div class="buttons">
+                {{ form.submit(class="submit-button") }}
+            </div>
+            <div class="divider">
+                <h2>OR</h2>
+            </div>
+            <a href="{{ url_for('register') }}" class="signOptions-button">Continue to Register</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

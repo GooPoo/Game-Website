@@ -1,0 +1,128 @@
+.web-container {
+  /*display: flex;*/
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+}
+
+
+#leaderboard-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #121213;
+  padding: 5rem 0;
+  counter-reset: list;
+}
+
+#leaderboard-container .leaderboard {
+  width: 90%;
+  max-width: 500px;
+  background: #3a3a3c;
+  color: #f8f8f8;
+  border-radius: 0.2rem;
+  padding: 2rem 0;
+  box-shadow: 0 0.5rem 1rem #5b5be638;
+  position: relative;
+}
+ 
+#leaderboard-container h2 {
+  margin-left: 2rem;
+  font-size: 1.2rem;
+}
+
+#leaderboard-container .leaderboard-date {
+  font-size: 1.2rem;
+  text-align: right;
+  margin-right: 2rem;
+  padding: 5px;
+  color: #f8f8f8;
+  opacity: 0.8;
+}
+
+#leaderboard-container ol {
+  margin-top: 2rem;
+}
+
+#leaderboard-container li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  font-weight: 700;
+  opacity: .8;
+}
+
+#leaderboard-container li::before {
+  counter-increment: list;
+  content: counter(list);
+}
+
+#leaderboard-container .name {
+  margin: 0 auto 0 1rem;
+}
+
+#leaderboard-container li:nth-of-type(odd) {
+  background: #48484a;
+}
+
+#leaderboard-container li.current-user-slot {
+  background: #5050d8;
+  opacity: 1;
+  color: #f8f8f8;
+  box-shadow: 0 0.2rem 0.5rem #79798e;
+  transform: scale(1.03);
+}
+
+#leaderboard-container a {
+  text-decoration: none;
+  color: inherit; 
+}
+
+#leaderboard-container a:hover {
+  color: #f8f8f8bb;; 
+}
+
+#leaderboard-container .buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+#leaderboard-container button {
+  cursor: pointer;
+  border: none;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  letter-spacing: 0.5px;
+  transition: 0.5s;
+}
+
+#leaderboard-container .exit {
+  background: transparent;
+  color: #f8f8f8;
+  opacity: 0.5;
+}
+
+#leaderboard-container .exit:hover {
+  color: #5050d8;
+  opacity: 1;
+}
+
+#leaderboard-container .continue {
+  background: #5b5be6;
+  color: #f8f8f8;
+  border-radius: 1rem;
+  box-shadow: 0 0.2rem #4949bd;
+  position: relative;
+}
+
+#leaderboard-container .continue:hover {
+  box-shadow: none;
+  top: 0.1rem;
+}

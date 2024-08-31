@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/wordleMain.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+{% endblock %}
+
+{% block content %}
+<div class="web-container">
+    <div id="game-container">
+        <div id="game">
+            <header>
+                <h1 class="title">WORDLE</h1>
+            </header>
+            <div>
+                <p class="stats">Game ID: {{ game_id }}</p>
+                <p class="stats">Word: {{ gamewordofday }}</p>
+                <button id="delete-game" class="wide-button">Delete Game</button>
+            </div>
+
+            <div id="board-container">
+                <div id="board"></div>
+                <div class="overlay-container">
+                    <i class='bx bx-collapse' id="overlay-btn"></i>
+                    <h2 class="overlay-headerMessage"></h2>
+                    <p class="overlay-message"></p>
+                    <div class="overlay-dataContainer">
+                        <p class="overlay-attempts"></p>
+                        <p class="overlay-score"></p>
+                        <p class="overlay-postition"></p>
+                    </div>
+                    <a href="{{ url_for('profile') }}" class="overlay-button">Continue for Stats</a>
+                    <a href="{{ url_for('leaderboard') }}" class="overlay-button">Continue for Leaderboard</a>
+                </div>
+                <div id="keyboard-container">
+                    <div class="keyboard-row">
+                        <button data-key="q">q</button>
+                        <button data-key="w">w</button>
+                        <button data-key="e">e</button>
+                        <button data-key="r">r</button>
+                        <button data-key="t">t</button>
+                        <button data-key="y">y</button>
+                        <button data-key="u">u</button>
+                        <button data-key="i">i</button>
+                        <button data-key="o">o</button>
+                        <button data-key="p">p</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="spacer-half"></div>
+                        <button data-key="a">a</button>
+                        <button data-key="s">s</button>
+                        <button data-key="d">d</button>
+                        <button data-key="f">f</button>
+                        <button data-key="g">g</button>
+                        <button data-key="h">h</button>
+                        <button data-key="j">j</button>
+                        <button data-key="k">k</button>
+                        <button data-key="l">l</button>
+                        <div class="spacer-half"></div>
+                    </div>
+                    <div class="keyboard-row">
+                        <button data-key="enter" class="wide-button">Enter</button>
+                        <button data-key="z">z</button>
+                        <button data-key="x">x</button>
+                        <button data-key="c">c</button>
+                        <button data-key="v">v</button>
+                        <button data-key="b">b</button>
+                        <button data-key="n">n</button>
+                        <button data-key="m">m</button>
+                        <button data-key="del" class="wide-button">Del</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const gameId = "{{ game_id }}";
+        const user = "{{ current_user.username }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/wordleMain.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+{% endblock %}
