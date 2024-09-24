@@ -6,6 +6,47 @@
 
 {% block content %}
 <div class="web-container">
+  <div id="profile-container">
+    <section class="recent-games">
+      <h2>Recent Games</h2>
+      <ol start="1">
+        {% for game, game_score, game_word in recent_games %}
+        <li>
+          <p class="date">
+            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game.id) }}">
+              {{ game_word.date.strftime('%d-%m-%Y') }}
+            </a>
+          </p>
+          <p class="score">
+            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game.id) }}">
+              {{ game_score.score }}
+            </a>
+          </p>
+        </li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <section class="top-scores">
+      <h2>Top 5 Highest Scores</h2>
+      <ol start="1">
+        {% for game_score, game_word in top_scores %}
+        <li>
+          <p class="date">
+            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game_score.game_id) }}">
+              {{ game_word.date.strftime('%d-%m-%Y') }}
+            </a>
+          </p>
+          <p class="score">
+            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game_score.game_id) }}">
+              {{ game_score.score }}
+            </a>
+          </p>
+        </li>
+        {% endfor %}
+      </ol>
+    </section>
+  </div>
 
 </div>
 {% endblock %}

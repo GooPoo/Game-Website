@@ -391,10 +391,38 @@ def profile(user_name=None):
 
     if not user_name:
         user_name = current_user.username
+
+    user = User.query.filter_by(username=user_name).first()
+
+    if not user:
+        return jsonify({'error': 'User is not found'}), 404
+
+    recent_games = (
+        db.session.query(Game, GameScore, Gamewordofday)
+        .join(GameScore, Game.id == GameScore.game_id)
+        .join(Gamewordofday, Game.game_word_id == Gamewordofday.id)
+        .filter(Game.user_id == user.id)
+        .order_by(Game.id.desc())
+        .limit(5)
+        .all()
+    )
+
+    top_scores = (
+        db.session.query(GameScore, Gamewordofday)
+        .join(Game, Game.id == GameScore.game_id)
+        .join(Gamewordofday, Game.game_word_id == Gamewordofday.id)
+        .filter(Game.user_id == user.id)
+        .order_by(GameScore.score.desc())
+        .limit(5)
+        .all()
+    )
     
 
     return render_template('profile.html', 
-                           title=f'{user_name} Profile')
+                           title=f'{user_name} Profile',
+                           recent_games=recent_games,
+                           top_scores=top_scores
+                           )
 
 
 # FOR DEVELOPMENT ONLY, DELETE THIS ROUTE FOR PRODUCTION
