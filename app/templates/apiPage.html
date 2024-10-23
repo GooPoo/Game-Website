@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/apiStyle.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="web-container">
+  <div id="api-container">
+    <h1>API Token Registration</h1>
+
+    {% if api_token %}
+        <p>Your API Token: <code>{{ api_token }}</code></p>
+        <form method="POST">
+            <button type="submit" name="revoke_token">Revoke Token</button>
+        </form>
+    {% else %}
+        <p>You do not have an API token yet. Generate one below:</p>
+        <form method="POST">
+            <button type="submit" name="generate_token">Generate Token</button>
+        </form>
+    {% endif %}
+    
+    <h2>How to Use</h2>
+    <p>Use the following API endpoints to interact with the Wordle game using bots:</p>
+    <ul>
+        <li><code>POST /api/submitWord</code> - Submit a word to play the game.</li>
+        <li><code>GET /api/get_guesses</code> - Retrieve the guesses for your game.</li>
+    </ul>
+
+    
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+{% endblock %}

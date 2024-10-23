@@ -61,6 +61,13 @@
                     <span class="tooltip">Rank</span>
                 </li>
                 <li>
+                    <a href="{{ url_for('apiPage') }}">
+                        <i class="bx bxs-grid-alt"></i>
+                        <span class="nav-item">API</span>
+                    </a>
+                    <span class="tooltip">API</span>
+                </li>
+                <li>
                     {% if current_user.is_authenticated %}
                         <a href="{{ url_for('logout') }}">
                             <i class="bx bx-log-out"></i>

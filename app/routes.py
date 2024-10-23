@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 #from flask_session import Session
 from werkzeug.exceptions import Unauthorized
 from datetime import datetime, date
+from functools import wraps
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -84,6 +85,7 @@ def logout():
 ###
 @current_app.route('/leaderboard', defaults={'leaderboard_date': None}, methods=['GET'])
 @current_app.route('/leaderboard/<leaderboard_date>', methods=['GET'])
+@login_required
 def leaderboard(leaderboard_date=None):
      # If no date is provided, use today's date
     if leaderboard_date is None:
@@ -424,6 +426,60 @@ def profile(user_name=None):
                            top_scores=top_scores
                            )
 
+
+###
+# Landing Page for the API registration
+###
+@current_app.route('/apiPage', methods=['GET', 'POST'])
+@login_required
+def apiPage():
+    if request.method == 'POST':
+        if 'generate_token' in request.form:
+            if current_user.api_token:
+                flash('You already have an API token.', 'error')
+            else:
+                current_user.generate_api_token()
+                flash('API token generated successfully.', 'success')
+        elif 'revoke_token' in request.form:
+            if current_user.api_token:
+                current_user.revoke_api_token()
+                flash('API token revoked successfully.', 'success')
+            else:
+                flash('No API token found to revoke.', 'error')
+    
+    return render_template('apiPage.html', api_token=current_user.api_token)
+
+def token_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({'error': 'Token is missing'}), 401
+
+        user = User.query.filter_by(api_token=token).first()
+        if not user:
+            return jsonify({'error': 'Invalid token'}), 401
+
+        return f(user, *args, **kwargs)
+    
+    return decorated_function
+
+
+@current_app.route('/api/submitWord', methods=['POST'])
+@token_required
+def api_submit_word(user):
+    data = request.get_json()
+    word = data.get('word')
+    game_id = data.get('game_id')
+    
+    if not word or not game_id:
+        return jsonify({'error': 'Missing word or game ID'}), 400
+    
+    feedback = validate_word(word, game_id)
+    if feedback == "bad":
+        return jsonify({'error': 'Invalid word'}), 400
+
+    return jsonify({'feedback': feedback})
 
 # FOR DEVELOPMENT ONLY, DELETE THIS ROUTE FOR PRODUCTION
 @current_app.route('/delete_game', methods=['POST'])

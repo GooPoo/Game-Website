@@ -50,3 +50,16 @@ flask db upgrade
 flask db downgrade
 *  rolls the changes back.
 ```
+
+
+## API Endpoint support for Wordle Games
+TODO: Write up a great tutorial on how the API works.
+
+To test currently, send a JWT in the form of:
+```bash 
+curl -X POST http://127.0.0.1:5000/api/submitWord ^
+-H "Content-Type: application/json" ^
+-H "Authorization: Your_Token" ^
+-d "{\"word\": \"sweep\", \"game_id\": 39}"
+```
+Obviously, changing the url with the endpoint you want, and changing the data you send. Token is removed from this file for security.
