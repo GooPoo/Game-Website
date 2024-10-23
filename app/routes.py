@@ -3,11 +3,12 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 #from flask_session import Session
 from werkzeug.exceptions import Unauthorized
 from datetime import datetime, date
+from functools import wraps
 
 from sqlalchemy.orm.exc import NoResultFound
 
 from . import db, login
-from app.forms import LoginForm, RegisterForm
+from app.forms import LoginForm, RegisterForm, TokenForm
 from app.models import User, Game, Gamewordofday, Wordlewords, Guess, GameScore
 
 
@@ -84,6 +85,7 @@ def logout():
 ###
 @current_app.route('/leaderboard', defaults={'leaderboard_date': None}, methods=['GET'])
 @current_app.route('/leaderboard/<leaderboard_date>', methods=['GET'])
+@login_required
 def leaderboard(leaderboard_date=None):
      # If no date is provided, use today's date
     if leaderboard_date is None:
@@ -391,10 +393,66 @@ def profile(user_name=None):
 
     if not user_name:
         user_name = current_user.username
+
+    user = User.query.filter_by(username=user_name).first()
+
+    if not user:
+        return jsonify({'error': 'User is not found'}), 404
+
+    recent_games = (
+        db.session.query(Game, GameScore, Gamewordofday)
+        .join(GameScore, Game.id == GameScore.game_id)
+        .join(Gamewordofday, Game.game_word_id == Gamewordofday.id)
+        .filter(Game.user_id == user.id)
+        .order_by(Game.id.desc())
+        .limit(5)
+        .all()
+    )
+
+    top_scores = (
+        db.session.query(GameScore, Gamewordofday)
+        .join(Game, Game.id == GameScore.game_id)
+        .join(Gamewordofday, Game.game_word_id == Gamewordofday.id)
+        .filter(Game.user_id == user.id)
+        .order_by(GameScore.score.desc())
+        .limit(5)
+        .all()
+    )
     
 
     return render_template('profile.html', 
-                           title=f'{user_name} Profile')
+                           title=f'{user_name} Profile',
+                           recent_games=recent_games,
+                           top_scores=top_scores
+                           )
+
+
+###
+# Landing Page for the API registration
+###
+@current_app.route('/apiPage', methods=['GET', 'POST'])
+@login_required
+def apiPage():
+    form = TokenForm()
+
+    if form.validate_on_submit():
+        if form.generate_token.data:
+            if current_user.api_token:
+                flash('You already have an API token.', 'error')
+            else:
+                current_user.generate_api_token()
+                flash('API token generated successfully.', 'success')
+        elif form.revoke_token.data:
+            if current_user.api_token:
+                current_user.revoke_api_token()
+                flash('API token revoked successfully.', 'success')
+            else:
+                flash('No API token found to revoke.', 'error')
+        
+        return redirect(url_for('apiPage'))
+
+    return render_template('apiPage.html', form=form, api_token=current_user.api_token)
+
 
 
 # FOR DEVELOPMENT ONLY, DELETE THIS ROUTE FOR PRODUCTION
