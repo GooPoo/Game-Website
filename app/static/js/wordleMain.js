@@ -1,3 +1,6 @@
+// Get the CSRF token from the hidden input
+const csrfToken = document.getElementById('csrf_token').value;
+
 // FOR DEVELOPMENT ONLY, DELETE THIS SECTION FOR PRODUCTION
 document.getElementById('delete-game').addEventListener('click', function() {
   if (confirm("Are you sure you want to delete this game? This action cannot be undone.")) {
@@ -6,6 +9,7 @@ document.getElementById('delete-game').addEventListener('click', function() {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
           },
           body: JSON.stringify({ game_id: gameId })
       })
@@ -174,7 +178,8 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch(`/submitWordleWord`, {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify({ word: currentWord, game_id: gameId })
     
