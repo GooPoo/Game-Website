@@ -12,12 +12,14 @@
     {% if api_token %}
         <p>Your API Token: <code>{{ api_token }}</code></p>
         <form method="POST">
-            <button type="submit" name="revoke_token">Revoke Token</button>
+            {{ form.hidden_tag() }}
+            {{ form.revoke_token() }}
         </form>
     {% else %}
         <p>You do not have an API token yet. Generate one below:</p>
         <form method="POST">
-            <button type="submit" name="generate_token">Generate Token</button>
+            {{ form.hidden_tag() }}
+            {{ form.generate_token() }} 
         </form>
     {% endif %}
     
