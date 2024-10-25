@@ -1,10 +1,13 @@
 from flask import request, jsonify
 from .auth import token_required
+from datetime import date
+from sqlalchemy.exc import NoResultFound
+
 from app.models import GameAPI, GuessAPI, GameScoreAPI, Gamewordofday, Wordlewords
 from app import db, csrf
 from app.api import api_bp
-from datetime import date
-from sqlalchemy.exc import NoResultFound
+from app.routes import validate_word
+
 
 # List all games that the user has participated in, with scores and status
 @api_bp.route('/wordle', methods=['GET'])
