@@ -15,7 +15,7 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     # Initialize extensions
-    csrf = CSRFProtect(app)
+    csrf.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
