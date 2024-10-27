@@ -8,7 +8,7 @@ import re
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from . import db, login
+from . import db, login, limiter
 from app.forms import LoginForm, RegisterForm, TokenForm
 from app.models import User, Game, Gamewordofday, Wordlewords, Guess, GameScore
 from app.controllers import validate_word, calculate_game_score
@@ -16,12 +16,14 @@ from app.controllers import validate_word, calculate_game_score
 
 
 @current_app.route('/')
+@limiter.limit("400/day;100/hour;20/minute")
 def index():
     return render_template('base.html', title='Home')
 
 
 
 @current_app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("100/day;30/hour;10/minute")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -44,6 +46,7 @@ def login():
 
 
 @current_app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("100/day;30/hour;10/minute")
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -76,6 +79,7 @@ def register():
 
 
 @current_app.route('/logout')
+@limiter.limit("100/day;30/hour;10/minute")
 def logout():
     logout_user()
     return redirect(url_for('index'))
@@ -88,6 +92,7 @@ def logout():
 @current_app.route('/leaderboard', defaults={'leaderboard_date': None}, methods=['GET'])
 @current_app.route('/leaderboard/<leaderboard_date>', methods=['GET'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def leaderboard(leaderboard_date=None):
      # If no date is provided, use today's date
     if leaderboard_date is None:
@@ -129,6 +134,7 @@ def leaderboard(leaderboard_date=None):
 ###
 @current_app.route('/wordle', methods=['GET'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def wordle():
     # Get the current date
     current_date = date.today()
@@ -165,6 +171,7 @@ def wordle():
 ###
 @current_app.route('/gameDetails/<int:game_id>', methods=['GET'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def gameDetails(game_id):
 
     if not game_id:
@@ -199,6 +206,7 @@ def gameDetails(game_id):
 ###
 @current_app.route('/getGuesses/<int:game_id>', methods=['GET'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def getGuesses(game_id):
 
     # Ensure the game_id is provided and belongs to the current user
@@ -230,6 +238,7 @@ def getGuesses(game_id):
 ###
 @current_app.route('/getOverlayData/<int:game_id>', methods=['GET'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def getOverlayData(game_id):
     
     if not game_id:
@@ -281,6 +290,7 @@ def getOverlayData(game_id):
 ###
 @current_app.route('/submitWord/<int:game_id>/<string:word>', methods=['POST'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def submitWord(game_id, word):
     if not word.isalpha() or len(word) != 5:
         return jsonify({'error': 'Word must be exactly 5 alphabetic characters'}), 400
@@ -336,6 +346,7 @@ def submitWord(game_id, word):
 @current_app.route('/profile', defaults={'user_name': None}, methods=['GET'])
 @current_app.route('/profile/<string:user_name>', methods=['GET'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def profile(user_name=None):
 
     if not user_name:
@@ -384,6 +395,7 @@ def profile(user_name=None):
 ###
 @current_app.route('/apiPage', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("400/day;100/hour;20/minute")
 def apiPage():
     form = TokenForm()
 
@@ -403,13 +415,14 @@ def apiPage():
         
         return redirect(url_for('apiPage'))
 
-    return render_template('apiPage.html', form=form, api_token=current_user.api_token)
+    return render_template('apiPage.html',  title='API Portal', form=form, api_token=current_user.api_token)
 
 
 
 # FOR DEVELOPMENT ONLY, DELETE THIS ROUTE FOR PRODUCTION
 @current_app.route('/delete_game', methods=['POST'])
 @login_required
+@limiter.limit("100/day;10/hour;1/minute")
 def delete_game():
     data = request.get_json()
     

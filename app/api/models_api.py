@@ -4,7 +4,7 @@ from datetime import date
 from sqlalchemy.exc import NoResultFound
 
 from app.models import GameAPI, GuessAPI, GameScoreAPI, Gamewordofday, Wordlewords
-from app import db, csrf
+from app import db, csrf, limiter
 from app.api import api_bp
 from app.controllers import validate_wordAPI, calculate_game_scoreAPI
 
@@ -12,6 +12,7 @@ from app.controllers import validate_wordAPI, calculate_game_scoreAPI
 # List all games that the user has participated in, with scores and status
 @api_bp.route('/wordle', methods=['GET'])
 @token_required
+@limiter.limit("20/day;20/hour;20/minute")
 def list_games_api(user):
     games = GameAPI.query.filter_by(user_id=user.id).all()
 
@@ -35,6 +36,7 @@ def list_games_api(user):
 @api_bp.route('/wordle/create', methods=['POST'])
 @token_required
 @csrf.exempt
+@limiter.limit("10/day;10/hour;10/minute")
 def create_game_api(user):
     current_date = date.today()
     
@@ -65,6 +67,7 @@ def create_game_api(user):
 @api_bp.route('/wordle/submit/<int:gameid>/<string:word>', methods=['POST'])
 @token_required
 @csrf.exempt
+@limiter.limit("20/day;20/hour;20/minute")
 def submit_word_api(user, gameid, word):
 
     if not word.isalpha() or len(word) != 5:
@@ -114,6 +117,7 @@ def submit_word_api(user, gameid, word):
 
 @api_bp.route('/wordle/status/<int:gameid>', methods=['GET'])
 @token_required
+@limiter.limit("20/day;20/hour;20/minute")
 def game_status_api(user, gameid):
     game = GameAPI.query.filter_by(id=gameid, user_id=user.id).first()
 
@@ -135,11 +139,3 @@ def game_status_api(user, gameid):
     }
 
     return jsonify(response_data), 200
-
-
-
-
-# You can add other API-related routes here, such as:
-# - Starting a new game
-# - Getting the status of a current game
-# - Fetching word of the day, etc.
