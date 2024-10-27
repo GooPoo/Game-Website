@@ -4,12 +4,14 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.exceptions import Unauthorized
 from datetime import datetime, date
 from functools import wraps
+import re
 
 from sqlalchemy.orm.exc import NoResultFound
 
 from . import db, login
 from app.forms import LoginForm, RegisterForm, TokenForm
 from app.models import User, Game, Gamewordofday, Wordlewords, Guess, GameScore
+from app.controllers import validate_word, calculate_game_score
 
 
 
@@ -125,9 +127,9 @@ def leaderboard(leaderboard_date=None):
 ####
 # Main Wordle Game Page
 ###
-@current_app.route('/wordleMain', methods=['GET'])
+@current_app.route('/wordle', methods=['GET'])
 @login_required
-def wordleMain():
+def wordle():
     # Get the current date
     current_date = date.today()
     
@@ -161,9 +163,9 @@ def wordleMain():
 ####
 # Display Finished Wordle Game Page
 ###
-@current_app.route('/wordleDisplayFinishedGames/<int:game_id>', methods=['GET'])
+@current_app.route('/gameDetails/<int:game_id>', methods=['GET'])
 @login_required
-def wordleDisplayFinishedGames(game_id):
+def gameDetails(game_id):
 
     if not game_id:
         return jsonify({'error': 'Game ID parameter missing'}), 400
@@ -184,7 +186,7 @@ def wordleDisplayFinishedGames(game_id):
     score = gameScore.score
     
 
-    return render_template('wordleDisplayFinishedGames.html', 
+    return render_template('gameDetails.html', 
                            title='Completed Game', 
                            user=user, 
                            game_id=game_id,
@@ -195,9 +197,9 @@ def wordleDisplayFinishedGames(game_id):
 ###
 # Returns Guesses of a Game
 ###
-@current_app.route('/get_guesses/<int:game_id>', methods=['GET'])
+@current_app.route('/getGuesses/<int:game_id>', methods=['GET'])
 @login_required
-def get_guesses(game_id):
+def getGuesses(game_id):
 
     # Ensure the game_id is provided and belongs to the current user
     if not game_id:
@@ -226,9 +228,9 @@ def get_guesses(game_id):
 ###
 # Returns Overlay data
 ###
-@current_app.route('/get_overlay_data/<int:game_id>', methods=['GET'])
+@current_app.route('/getOverlayData/<int:game_id>', methods=['GET'])
 @login_required
-def get_overlay_data(game_id):
+def getOverlayData(game_id):
     
     if not game_id:
         return jsonify({'error': 'Game ID parameter missing'}), 400
@@ -277,36 +279,34 @@ def get_overlay_data(game_id):
 ###
 # User submission of a Word for a Game
 ###
-@current_app.route('/submitWordleWord', methods=['POST'])
+@current_app.route('/submitWord/<int:game_id>/<string:word>', methods=['POST'])
 @login_required
-def submitWordleWord():
+def submitWord(game_id, word):
+    if not word.isalpha() or len(word) != 5:
+        return jsonify({'error': 'Word must be exactly 5 alphabetic characters'}), 400
 
-    data = request.get_json()
+    today = date.today()
+    game_word_of_day = Gamewordofday.query.filter_by(date=today).first()
 
-    word = data.get('word')
-    game_id = data.get('game_id')
+    if not game_word_of_day:
+        return jsonify({'error': 'No word of the day found for today'}), 404
 
-    if not word or not game_id:
-        return jsonify({'error': 'Missing word or game ID parameter'}), 400
-
-    # Ensure the game_id belongs to the current user
     game = Game.query.filter_by(id=game_id, user_id=current_user.id).first()
     if not game:
         return jsonify({'error': 'Game not found or unauthorized'}), 404
     
-    # Check if the game is already complete
     if game.complete:
         return jsonify({'error': 'Game is already complete'}), 400
+    
+    if game.game_word_id != game_word_of_day.id:
+        return jsonify({'error': 'This game is not active for today'}), 400
 
-    # Validate the word
     feedback = validate_word(word, game_id)
     if feedback == "bad":
         return jsonify({'error': 'Invalid word'}), 400
     
-    # Count the current number of guesses for this game
     guess_count = Guess.query.filter_by(game_id=game_id).count()
     
-    # Save the valid guess to the database
     new_guess = Guess(
         game_id=game_id,
         guess_number=guess_count + 1,
@@ -315,10 +315,8 @@ def submitWordleWord():
     )
     db.session.add(new_guess)
 
-    # Check if the word is correct (i.e., all feedback is '2')
     if feedback == '22222' or guess_count + 1 >= 6:
         game.complete = True
-        # Calculate and save the game score
         score = calculate_game_score(game_id)
         game_score = GameScore(game_id=game_id, score=score)
         db.session.add(game_score)
@@ -331,68 +329,22 @@ def submitWordleWord():
 
 
 
-def validate_word(word, game_id):
-
-    # Check if the word exists in the Wordlewords table
-    valid_word = Wordlewords.query.filter_by(word=word).first()
-    if not valid_word:
-        return "bad"
-    
-    # Get the target word for the game
-    game = Game.query.filter_by(id=game_id).first()
-    target_word = game.word_of_the_day.word
-
-    feedback = [0] * 5  # Initialize feedback with all 0s
-    target_word_letters = list(target_word)
-
-    # Check for correct positions first
-    for i in range(5):
-        if word[i] == target_word[i]:
-            feedback[i] = 2
-            target_word_letters[i] = None  # Mark this letter as used
-
-    # Check for correct letters in wrong positions
-    for i in range(5):
-        if feedback[i] != 2 and word[i] in target_word_letters:
-            feedback[i] = 1
-            target_word_letters[target_word_letters.index(word[i])] = None  # Mark this letter as used
-
-    return ''.join(map(str, feedback))
-
-
-
-def calculate_game_score(game_id):
-    guesses = Guess.query.filter_by(game_id=game_id).all()
-
-    total_feedback_score = 0
-    won_game = False
-
-    for guess in guesses:
-        score_str = guess.guess_score
-        total_feedback_score += sum(int(char) for char in score_str)
-        if score_str == '22222':
-            won_game = True
-
-    guess_count = len(guesses)
-
-    if won_game:
-        final_score = total_feedback_score * (2 ** (7 - guess_count))
-    else:
-        final_score = total_feedback_score
-    return final_score
-
-
 
 ####
 # Display Profile/Personal Stats Page
 ###
 @current_app.route('/profile', defaults={'user_name': None}, methods=['GET'])
-@current_app.route('/profile/<user_name>', methods=['GET'])
+@current_app.route('/profile/<string:user_name>', methods=['GET'])
 @login_required
 def profile(user_name=None):
 
     if not user_name:
         user_name = current_user.username
+
+    if not re.match(r'^[a-zA-Z0-9_]+$', user_name):
+        return jsonify({'error': 'Profile is using illegal characters'}), 400
+
+    user_name = user_name.strip()
 
     user = User.query.filter_by(username=user_name).first()
 

@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getGuesses() {
-      fetch(`/get_guesses/${gameId}`)
+      fetch(`/getGuesses/${gameId}`)
           .then(response => {
               if (!response.ok) {
                   throw new Error('Network response was not ok');
@@ -174,15 +174,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     
       const currentWord = currentWordArr.join("");
+
+      const url = `/submitWord/${gameId}/${currentWord}`;
     
-      fetch(`/submitWordleWord`, {
+      fetch(url, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify({ word: currentWord, game_id: gameId })
-    
+        },   
       })
       .then(async (res) => {
         const data = await res.json();
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!overlayMessage || !overlayContainer || !overlayHeaderMessage || !overlayAttempts || !overlayScore || !overlayPosition) {
           return;
       }
-      fetch(`/get_overlay_data/${gameId}`)
+      fetch(`/getOverlayData/${gameId}`)
         .then(response => response.json())
         .then(data => {
           if (isGameLost) {
