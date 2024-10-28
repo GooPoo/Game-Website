@@ -15,14 +15,14 @@ from app.controllers import validate_word, calculate_game_score
 
 
 
-@current_app.route('/')
+@current_app.route('/words')
 @limiter.limit("400/day;100/hour;20/minute")
 def index():
     return render_template('base.html', title='Home')
 
 
 
-@current_app.route('/login', methods=['GET', 'POST'])
+@current_app.route('/words/login', methods=['GET', 'POST'])
 @limiter.limit("100/day;30/hour;10/minute")
 def login():
     if current_user.is_authenticated:
@@ -45,7 +45,7 @@ def login():
 
 
 
-@current_app.route('/register', methods=['GET', 'POST'])
+@current_app.route('/words/register', methods=['GET', 'POST'])
 @limiter.limit("100/day;30/hour;10/minute")
 def register():
     if current_user.is_authenticated:
@@ -78,7 +78,7 @@ def register():
 
 
 
-@current_app.route('/logout')
+@current_app.route('/words/logout')
 @limiter.limit("100/day;30/hour;10/minute")
 def logout():
     logout_user()
@@ -89,8 +89,8 @@ def logout():
 ####
 # Main Daily Leaderboard Page
 ###
-@current_app.route('/leaderboard', defaults={'leaderboard_date': None}, methods=['GET'])
-@current_app.route('/leaderboard/<leaderboard_date>', methods=['GET'])
+@current_app.route('/words/leaderboard', defaults={'leaderboard_date': None}, methods=['GET'])
+@current_app.route('/words/leaderboard/<leaderboard_date>', methods=['GET'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def leaderboard(leaderboard_date=None):
@@ -132,7 +132,7 @@ def leaderboard(leaderboard_date=None):
 ####
 # Main Wordle Game Page
 ###
-@current_app.route('/wordle', methods=['GET'])
+@current_app.route('/words/wordle', methods=['GET'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def wordle():
@@ -169,7 +169,7 @@ def wordle():
 ####
 # Display Finished Wordle Game Page
 ###
-@current_app.route('/gameDetails/<int:game_id>', methods=['GET'])
+@current_app.route('/words/gameDetails/<int:game_id>', methods=['GET'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def gameDetails(game_id):
@@ -204,7 +204,7 @@ def gameDetails(game_id):
 ###
 # Returns Guesses of a Game
 ###
-@current_app.route('/getGuesses/<int:game_id>', methods=['GET'])
+@current_app.route('/words/getGuesses/<int:game_id>', methods=['GET'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def getGuesses(game_id):
@@ -236,7 +236,7 @@ def getGuesses(game_id):
 ###
 # Returns Overlay data
 ###
-@current_app.route('/getOverlayData/<int:game_id>', methods=['GET'])
+@current_app.route('/words/getOverlayData/<int:game_id>', methods=['GET'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def getOverlayData(game_id):
@@ -288,7 +288,7 @@ def getOverlayData(game_id):
 ###
 # User submission of a Word for a Game
 ###
-@current_app.route('/submitWord/<int:game_id>/<string:word>', methods=['POST'])
+@current_app.route('/words/submitWord/<int:game_id>/<string:word>', methods=['POST'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def submitWord(game_id, word):
@@ -343,8 +343,8 @@ def submitWord(game_id, word):
 ####
 # Display Profile/Personal Stats Page
 ###
-@current_app.route('/profile', defaults={'user_name': None}, methods=['GET'])
-@current_app.route('/profile/<string:user_name>', methods=['GET'])
+@current_app.route('/words/profile', defaults={'user_name': None}, methods=['GET'])
+@current_app.route('/words/profile/<string:user_name>', methods=['GET'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def profile(user_name=None):
@@ -393,7 +393,7 @@ def profile(user_name=None):
 ###
 # Landing Page for the API registration
 ###
-@current_app.route('/apiPage', methods=['GET', 'POST'])
+@current_app.route('/words/apiPage', methods=['GET', 'POST'])
 @login_required
 @limiter.limit("400/day;100/hour;20/minute")
 def apiPage():
@@ -420,7 +420,7 @@ def apiPage():
 
 
 # FOR DEVELOPMENT ONLY, DELETE THIS ROUTE FOR PRODUCTION
-@current_app.route('/delete_game', methods=['POST'])
+@current_app.route('/words/delete_game', methods=['POST'])
 @login_required
 @limiter.limit("100/day;10/hour;1/minute")
 def delete_game():
