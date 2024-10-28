@@ -13,12 +13,12 @@
         {% for game, game_score, game_word in recent_games %}
         <li>
           <p class="date">
-            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game.id) }}">
+            <a href="{{ url_for('gameDetails', game_id=game.id) }}">
               {{ game_word.date.strftime('%d-%m-%Y') }}
             </a>
           </p>
           <p class="score">
-            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game.id) }}">
+            <a href="{{ url_for('gameDetails', game_id=game.id) }}">
               {{ game_score.score }}
             </a>
           </p>
@@ -33,12 +33,12 @@
         {% for game_score, game_word in top_scores %}
         <li>
           <p class="date">
-            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game_score.game_id) }}">
+            <a href="{{ url_for('gameDetails', game_id=game_score.game_id) }}">
               {{ game_word.date.strftime('%d-%m-%Y') }}
             </a>
           </p>
           <p class="score">
-            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game_score.game_id) }}">
+            <a href="{{ url_for('gameDetails', game_id=game_score.game_id) }}">
               {{ game_score.score }}
             </a>
           </p>

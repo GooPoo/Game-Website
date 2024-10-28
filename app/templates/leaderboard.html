@@ -20,7 +20,7 @@
             </a>
           </p>
           <p class="score">
-            <a href="{{ url_for('wordleDisplayFinishedGames', game_id=game_score.game_id) }}">
+            <a href="{{ url_for('gameDetails', game_id=game_score.game_id) }}">
               {{ game_score.score }}
             </a>
           </p>

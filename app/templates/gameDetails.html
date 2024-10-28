@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gameDetails.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+{% endblock %}
+
+{% block content %}
+<div class="web-container">
+    <div id="game-container">
+        <div id="game">
+            <header>
+                <h1 class="title">WORDLE</h1>
+            </header>
+            <div>
+                <p class="stats">User: {{ user }}</p>
+                <p class="stats">Game ID: {{ game_id }}</p>
+                <p class="stats">Score: {{ score }}</p>
+                <button id="delete-game" class="wide-button">Delete Game</button>
+            </div>
+
+            <div id="board-container">
+                <div id="board"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const gameId = "{{ game_id }}";
+        const user = "{{ user }}";
+        const score = "{{ score }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/gameDetails.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+{% endblock %}
