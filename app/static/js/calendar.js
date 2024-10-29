@@ -74,7 +74,7 @@ generateCalendar = (month, year) => {
 document.querySelector('.continue').onclick = () => {
     // Format the selected date for the leaderboard route
     const newDate = `${selectedYear}-${(selectedMonth + 1).toString().padStart(2, '0')}-${selectedDay.toString().padStart(2, '0')}`;
-    window.location.href = `/leaderboard/${newDate}`;
+    window.location.href = `/words/leaderboard/${newDate}`;
 };
 
 let month_list = calendar.querySelector('.month-list')
