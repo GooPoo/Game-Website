@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let guessedWordCount = 0;    
 
     function getGuesses() {
-    fetch(`/getGuesses/${gameId}`)
+    fetch(`/words/getGuesses/${gameId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
