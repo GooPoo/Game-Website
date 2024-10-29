@@ -6,9 +6,10 @@ from datetime import datetime, date
 from functools import wraps
 import re
 
+import logging
 from sqlalchemy.orm.exc import NoResultFound
 
-from . import db, login, limiter
+from app import db, login, limiter
 from app.forms import LoginForm, RegisterForm, TokenForm
 from app.models import User, Game, Gamewordofday, Wordlewords, Guess, GameScore
 from app.controllers import validate_word, calculate_game_score
@@ -69,8 +70,9 @@ def register():
             db.session.commit()
             flash('Account created successfully. You can now login.', 'success')
             return redirect(url_for('login'))
-        except:
+        except Exception as e:
             db.session.rollback()
+            logging.error(f"Error adding new user: {e}")
             flash('An error occurred. Please try again.', 'error')
             return redirect(url_for('register'))
     
