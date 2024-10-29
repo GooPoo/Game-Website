@@ -37,7 +37,7 @@ def create_app(config_class=Config):
         app.register_blueprint(api_bp, url_prefix='/api')
 
         from app.test import test_bp
-        app.register_blueprint(test_bp)
+        app.register_blueprint(test_bp, url_prefix='/words')
 
         # Define the user loader function for Flask-Login
         @login.user_loader
