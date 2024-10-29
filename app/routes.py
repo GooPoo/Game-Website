@@ -23,7 +23,7 @@ def test_query():
     except Exception as e:
         return jsonify({"message": "Query failed!", "error": str(e)}), 500
 
-@app.route('/words/test_insert')
+@current_app.route('/words/test_insert')
 def test_insert():
     new_user = User(username='testuser')
     new_user.set_password('password')
