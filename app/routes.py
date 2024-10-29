@@ -14,6 +14,14 @@ from app.forms import LoginForm, RegisterForm, TokenForm
 from app.models import User, Game, Gamewordofday, Wordlewords, Guess, GameScore
 from app.controllers import validate_word, calculate_game_score
 
+@current_app.route('/words/test_query')
+def test_query():
+    try:
+        # Attempt to query all users
+        users = User.query.all()
+        return jsonify({"message": "Query successful!", "users": [user.username for user in users]}), 200
+    except Exception as e:
+        return jsonify({"message": "Query failed!", "error": str(e)}), 500
 
 
 @current_app.route('/words')
