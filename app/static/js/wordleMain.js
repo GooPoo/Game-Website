@@ -5,7 +5,7 @@ const csrfToken = document.getElementById('csrf_token').value;
 document.getElementById('delete-game').addEventListener('click', function() {
   if (confirm("Are you sure you want to delete this game? This action cannot be undone.")) {
       console.log('Deleting game with ID:', gameId);
-      fetch('/delete_game', {
+      fetch('/words/delete_game', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getGuesses() {
-      fetch(`/getGuesses/${gameId}`)
+      fetch(`/words/getGuesses/${gameId}`)
           .then(response => {
               if (!response.ok) {
                   throw new Error('Network response was not ok');
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
       const currentWord = currentWordArr.join("");
 
-      const url = `/submitWord/${gameId}/${currentWord}`;
+      const url = `/words/submitWord/${gameId}/${currentWord}`;
     
       fetch(url, {
         method: "POST",
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!overlayMessage || !overlayContainer || !overlayHeaderMessage || !overlayAttempts || !overlayScore || !overlayPosition) {
           return;
       }
-      fetch(`/getOverlayData/${gameId}`)
+      fetch(`/words/getOverlayData/${gameId}`)
         .then(response => response.json())
         .then(data => {
           if (isGameLost) {
