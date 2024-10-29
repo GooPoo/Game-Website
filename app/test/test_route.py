@@ -4,7 +4,7 @@ from app.models import User
 
 test_bp = Blueprint('test', __name__)
 
-@test_bp.route('/words/test_query')
+@test_bp.route('/test_query')
 def test_query():
     try:
         # Attempt to query all users
