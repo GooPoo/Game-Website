@@ -21,6 +21,7 @@ mdurl==0.1.2
 ordered-set==4.1.0
 packaging==24.1
 Pygments==2.18.0
+PyMySQL==1.1.1
 rich==13.9.3
 SQLAlchemy==2.0.31
 typing_extensions==4.12.2
