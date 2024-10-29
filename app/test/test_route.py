@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify
 from app import db
 from app.models import User
 
-test_bp = Blueprint('test', __name__)
-
 @test_bp.route('/test_query')
 def test_query():
     try:
