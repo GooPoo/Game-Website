@@ -23,6 +23,18 @@ def test_query():
     except Exception as e:
         return jsonify({"message": "Query failed!", "error": str(e)}), 500
 
+@app.route('/words/test_insert')
+def test_insert():
+    new_user = User(username='testuser')
+    new_user.set_password('password')
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User added successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Query failed!", "error": str(e)}), 500
+
 
 @current_app.route('/words')
 @limiter.limit("400/day;100/hour;20/minute")
@@ -72,6 +84,9 @@ def register():
         
         new_user = User(username=form.username.data)
         new_user.set_password(form.password.data)
+
+        logging.debug(f"Attempting to register user: {form.username.data}, password: {form.password.data}")
+
 
         try:
             db.session.add(new_user)
