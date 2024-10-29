@@ -19,7 +19,7 @@ document.getElementById('delete-game').addEventListener('click', function() {
               alert(data.error);
           } else {
               alert(data.message);
-              window.location.href = '/';
+              window.location.href = '/words';
           }
       })
       .catch(error => console.error('Error:', error));
