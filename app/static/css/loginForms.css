@@ -195,6 +195,20 @@
     background: #6a6f71;
 }
 
+.flash-messages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it appears above other elements */
+    color: #f8f8f8;
+    width: 100%;
+    max-width: 472px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+
 
 
 /* Phones */

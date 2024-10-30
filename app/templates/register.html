@@ -6,6 +6,15 @@
 
 {% block content %}
 <div class="web-container">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <strong>{{ message }}</strong>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="loginContainer">
         <h2 class="signOptions-header">Register</h2>
         <form name="register" action="" method="post">

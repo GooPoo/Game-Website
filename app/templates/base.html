@@ -89,15 +89,6 @@
             <i class="bx bx-menu"></i>
         </div>
         <div class="main-content">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <ul>
-                        {% for message in messages %}
-                            <li>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
             {% block content %}{% endblock %}
             {% block scripts %}{% endblock %}
         </div>
