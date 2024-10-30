@@ -229,3 +229,29 @@
   flex: 0.5;
 }
 
+
+@media (max-width: 600px) {
+  #game-container .square {
+    min-width: 50px;
+    min-height: 50px;
+    font-size: 30px;
+  }
+
+  #game-container #board-container {
+    padding: 0;
+  }
+
+  #game-container #keyboard-container {
+    margin-top: -30px;
+  }
+
+  #game-container .keyboard-row button {
+    font-size: 1em;
+    height: 40px;
+  }
+
+  #game-container .keyboard-row button.wide-button {
+    font-size: 10px;
+  }
+}
+
