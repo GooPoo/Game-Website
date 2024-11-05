@@ -14,27 +14,6 @@ from app.forms import LoginForm, RegisterForm, TokenForm
 from app.models import User, Game, Gamewordofday, Wordlewords, Guess, GameScore
 from app.controllers import validate_word, calculate_game_score
 
-@current_app.route('/words/test_query')
-def test_query():
-    try:
-        # Attempt to query all users
-        users = User.query.all()
-        return jsonify({"message": "Query successful!", "users": [user.username for user in users]}), 200
-    except Exception as e:
-        return jsonify({"message": "Query failed!", "error": str(e)}), 500
-
-@current_app.route('/words/test_insert')
-def test_insert():
-    new_user = User(username='testuser')
-    new_user.set_password('password')
-    try:
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({"message": "User added successfully!"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"message": "Query failed!", "error": str(e)}), 500
-
 
 @current_app.route('/words')
 @limiter.limit("400/day;100/hour;20/minute")
@@ -58,8 +37,9 @@ def login():
         elif not user.check_password(form.password.data):
             flash('Invalid password.', 'error')
             return redirect(url_for('login'))
-        
-        login_user(user)
+
+        remember = form.remember_me.data
+        login_user(user, remember=remember)
         return redirect(url_for('index'))
     
     return render_template('login.html', title='Sign In', form=form)

@@ -11,6 +11,7 @@ def validate_username(form, field):
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), validate_username])
     password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign in')
 
 class RegisterForm(FlaskForm):

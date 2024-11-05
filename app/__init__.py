@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from datetime import timedelta
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -20,6 +21,7 @@ limiter = Limiter(
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
 
     # Initialize extensions
     csrf.init_app(app)
