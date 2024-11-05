@@ -36,6 +36,10 @@
                 {% endfor %}
             </div>
 
+            <div class="signOptions-header">
+                {{ form.remember_me }} {{ form.remember_me.label }}
+            </div>
+
             <div class="buttons">
                 {{ form.submit(class="submit-button") }}
             </div>

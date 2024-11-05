@@ -10,3 +10,7 @@ class Config(object):
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')  # Expect MySQL URI
     else:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+    
+    # Cookie settings
+    REMEMBER_COOKIE_SECURE = os.getenv('FLASK_ENV') == 'production'
+    REMEMBER_COOKIE_HTTPONLY = True
