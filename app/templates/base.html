@@ -68,6 +68,13 @@
                     <span class="tooltip">API</span>
                 </li>
                 <li>
+                    <a href="{{ url_for('socketsPage') }}">
+                        <i class="bx bxs-grid-alt"></i>
+                        <span class="nav-item">Socket</span>
+                    </a>
+                    <span class="tooltip">Socket</span>
+                </li>
+                <li>
                     {% if current_user.is_authenticated %}
                         <a href="{{ url_for('logout') }}">
                             <i class="bx bx-log-out"></i>
