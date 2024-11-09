@@ -7,6 +7,8 @@ from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import timedelta
+from flask_socketio import SocketIO
+from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -17,11 +19,14 @@ limiter = Limiter(
             storage_uri="memory://",
             default_limits=["400 per day", "100 per hour"]
         )
+socketio = SocketIO()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
+
+    CORS(app, resources={r"/socket.io/*": {"origins": ["http://127.0.0.1:5000"]}})
 
     # Initialize extensions
     csrf.init_app(app)
@@ -29,10 +34,11 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     limiter.init_app(app)
+    socketio.init_app(app, cors_allowed_origins=["http://127.0.0.1:5000"], async_mode="eventlet")
 
     with app.app_context():
         # Import routes and models here to avoid circular imports
-        from app import routes, models
+        from app import routes, models, sockets
 
         # Register blueprints
         from app.api import api_bp

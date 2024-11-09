@@ -21,6 +21,12 @@ def index():
     return render_template('base.html', title='Home')
 
 
+@current_app.route('/words/socketsPage')
+@limiter.limit("400/day;100/hour;20/minute")
+def socketsPage():
+    return render_template('sockets.html', title='Sockets')
+
+
 
 @current_app.route('/words/login', methods=['GET', 'POST'])
 @limiter.limit("100/day;30/hour;10/minute")

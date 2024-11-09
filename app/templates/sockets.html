@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/apiStyle.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="web-container">
+  <div id="api-container">
+    <h1>Sockets Page</h1>
+    
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://localhost:5000');
+    
+        socket.emit('message', 'Hello, Server!');
+    
+        socket.on('response', function(data) {
+        console.log('Received from server: ' + data.data);
+        });
+    </script>
+{% endblock %}
